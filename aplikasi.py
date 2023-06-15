@@ -20,7 +20,7 @@ import streamlit.components.v1 as components
 
 # pige title
 st.set_page_config(
-    page_title="Forecasting Data Saham PT INDOFOOD (Time Series Data)",
+    page_title="Forecasting Data Saham PT Ultrajaya Milk Industry & Trading Company",
     page_icon="https://abisgajian.id/images/thumbnail/ini-dia-daftar-saham-kategori-blue-chip-di-bursa-saham-indonesia.jpg",
 )
 
@@ -41,7 +41,7 @@ st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 
 # insialisasi web
 st.markdown(
-    "<h1 style='text-align: center; color: white; margin:0 ; padding:0;'>Forecasting Data Saham PT INDOFOOD (Time Series Data)</h1>",
+    "<h1 style='text-align: center; color: black; margin:0 ; padding:0;'>Forecasting Data Saham PT INDOFOOD (Time Series Data)</h1>",
     unsafe_allow_html=True,
 )
 st.markdown(
@@ -50,7 +50,7 @@ st.markdown(
 )
 st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 st.markdown(
-    ' <div style="position: fixed; top: 0; left: 0; z-index: 9999; width: 100%; background: rgb(14, 17, 23); ; text-align: center;"><a href="https://github.com/AlifnurFathurrahmanPrasodjo/Project-Penambangan-Data.git" target="_blank"><button style="border-radius: 12px;position: relative; top:50%; margin:10px;"><i class="fa fa-github"></i> GitHub</button></a><a href="https://alifnurfathurrahmanprasodjo.github.io/DATAMINING/project_pendat.html?highlight=project" target="_blank"><button  style="border-radius: 12px;position: relative; top:50%;"><i style="color: orange" class="fa fa-book"></i> Jupyter Book</button></a></div>',
+    ' <div style="position: fixed; top: 0; left: 0; z-index: 9999; width: 100%; background: rgb(14, 17, 23); ; text-align: center;"><a href="https://github.com/Yayanmnh/kuispro.git" target="_blank"><button style="border-radius: 12px;position: relative; top:50%; margin:10px;"><i class="fa fa-github"></i> GitHub</button></a><a href="https://alifnurfathurrahmanprasodjo.github.io/DATAMINING/project_pendat.html?highlight=project" target="_blank"><button  style="border-radius: 12px;position: relative; top:50%;"><i style="color: orange" class="fa fa-book"></i> Jupyter Book</button></a></div>',
     unsafe_allow_html=True,
 )
 
@@ -62,284 +62,231 @@ with tab1:
     with col1:
         st.write("Deskripsi Aplikasi :")
         st.markdown(
-            "<p style='text-align: justify;'>Aplikasi Peramalan Data Saham PT INDOFOOD adalah perangkat lunak yang dirancang untuk memberikan kemampuan peramalan dan analisis untuk data saham PT INDOFOOD, sebuah perusahaan fiktif. Aplikasi ini bertujuan untuk membantu investor, pedagang, dan analis keuangan dalam membuat keputusan dengan memprediksi harga dan tren saham di masa depan.</p>",
+            "<p style='text-align: justify;'>Data PT Ultrajaya Milk Industry & Trading Company Tbk (ULTJ.JK) adalah data harga saham yang ditampilkan dalam format Jakarta Delayed Price dan dalam mata uang Rupiah (IDR). Informasi ini adalah data yang berasal dari platform atau sumber yang memberikan data pasar keuangan secara real-time atau dengan penundaan tertentu. Data diambil dari link https://finance.yahoo.com/quote/ULTJ.JK/history?p=ULTJ.JK</p>",
             unsafe_allow_html=True,
         )
-        st.write("Sumber data :")
+        st.write("Tipe Data :")
         st.markdown(
-            "<p style='text-align: justify;'>Aplikasi mengambil data stok historis PT INDOFOOD dari sumber terpercaya https://finance.yahoo.com/quote/INDF.JK/profile?p=INDF.JK. Ini mengambil data seperti harga saham harian, volume perdagangan, dan metrik keuangan relevan lainnya.</p>",
+            "<p style='text-align: justify;'>Tipe data yang diberikan adalah data harga saham PT Ultrajaya Milk Industry & Trading Company Tbk di Bursa Efek Indonesia (BEI). Biasanya, data harga saham terdiri dari beberapa kolom seperti tanggal perdagangan (Date), harga pembukaan (Open), harga penutupan (Close), harga tertinggi (High), harga terendah (Low), volume perdagangan (Volume), dan mungkin ada kolom tambahan terkait indikator atau informasi lainnya",
             unsafe_allow_html=True,
         )
         st.write("Deskripsi Data :")
         st.write(
-            "1. Date: Tanggal entri data pasar saham.\n 2. Open: Harga pembukaan saham pada hari itu.\n 3. High: Harga tertinggi yang dicapai saham selama hari perdagangan.\n 4. Low: Harga terendah yang dicapai oleh saham selama hari perdagangan.\n 5. Close: Harga penutupan saham pada hari itu.\n 6. Adj Close: Harga penutupan saham yang disesuaikan, yang memperhitungkan tindakan korporasi apa pun (seperti dividen atau pemecahan saham) yang dapat memengaruhi harga saham.\n 7. Volume: Volume perdagangan, yaitu jumlah total saham yang diperdagangkan pada hari itu."
+            "<p style='text-align: justify;'>Data ini memberikan informasi tentang pergerakan harga saham PT Ultrajaya Milk Industry & Trading Company Tbk di pasar saham Jakarta. Data tersebut menggambarkan harga saham pada waktu tertentu, dan seringkali berisi historis harga saham yang dapat digunakan untuk analisis teknis, evaluasi kinerja saham, dan pengambilan keputusan investasi.",
+            unsafe_allow_html=True,
         )
     with col2:
-        data = pd.read_csv("ULTJ.JK.csv")
+        data = pd.read_csv(
+            "https://raw.githubusercontent.com/Yayanmnh/kuispro/main/ULTJ.JK.csv"
+        )
         data
 
 with tab2:
-    data = pd.read_csv("ULTJ.JK.csv")
-    data.fillna(0, inplace=True)
-
-    fd1 = data.drop(data.columns[0:2], axis=1)
-    fd2 = fd1.drop(fd1.columns[2], axis=1)
-    fd3 = fd2.drop(fd2.columns[5:10], axis=1)
-    fd4 = fd3.drop(fd3.columns[6:14], axis=1)
-    fd4
-
-    y = fd4["depressed"].values
-    x = fd4.drop(fd4.columns[6], axis=1)
+    df = pd.read_csv(
+        "https://raw.githubusercontent.com/Yayanmnh/kuispro/main/ULTJ.JK.csv",
+        usecols=["Date", "Open"],
+    )
+    df
 
     dataSplit = """
-    from sklearn.model_selection import train_test_split
-    X_train, X_test, y_train, y_test=train_test_split(x, y, test_size=0.2, random_state=1)
-    X_train.shape + X_test.shape
+    data = df["Open"]
+    n = len(data)
+    sizeTrain = round(n * 0.8)
+    data_train = pd.DataFrame(data[:sizeTrain])
+    data_test = pd.DataFrame(data[sizeTrain:])
+
+    from sklearn.preprocessing import MinMaxScaler
+
+    scaler = MinMaxScaler()
+    train_scaled = scaler.fit_transform(data_train)
+
+    # Mengaplikasikan MinMaxScaler pada data pengujian
+    test_scaled = scaler.transform(data_test)
+    # joblib.dump(scaler, 'modelScaler.pkl')
+
+    train = pd.DataFrame(train_scaled, columns=["data"])
+    train = train["data"]
+
+    test = pd.DataFrame(test_scaled, columns=["data"])
+    test = test["data"]
     """
     st.code(dataSplit, language="python")
 
-    from sklearn.model_selection import train_test_split
+    data = df["Open"]
+    n = len(data)
+    sizeTrain = round(n * 0.8)
+    data_train = pd.DataFrame(data[:sizeTrain])
+    data_test = pd.DataFrame(data[sizeTrain:])
 
-    X_train, X_test, y_train, y_test = train_test_split(
-        x, y, test_size=0.2, random_state=1
-    )
-    X_train.shape + X_test.shape
+    from sklearn.preprocessing import MinMaxScaler
+
+    scaler = MinMaxScaler()
+    train_scaled = scaler.fit_transform(data_train)
+
+    # Mengaplikasikan MinMaxScaler pada data pengujian
+    test_scaled = scaler.transform(data_test)
+    # joblib.dump(scaler, 'modelScaler.pkl')
+
+    train = pd.DataFrame(train_scaled, columns=["data"])
+    train = train["data"]
+
+    test = pd.DataFrame(test_scaled, columns=["data"])
+    test = test["data"]
+    test
 
     saveData = """
-    from pathlib import Path  
-    filepath = Path('/content/drive/MyDrive/DATA MINING/TUGAS/model/data_depresi.csv')  
-    filepath.parent.mkdir(parents=True, exist_ok=True)  
-    x.to_csv(filepath) 
+    import numpy as np
+from numpy import array
+
+def split_sequence(sequence, n_steps):
+  X, y = list(), list()
+  for i in range(len(sequence)):
+    # find the end of this pattern
+    end_ix = i + n_steps
+    # check if we are beyond the sequence
+    if end_ix > len(sequence)-1:
+      break
+    # gather input and output parts of the pattern
+    seq_x, seq_y = sequence[i:end_ix], sequence[end_ix]
+    X.append(seq_x)
+    y.append(seq_y)
+
+  return array(X), array(y)
+
+df_X, df_Y = split_sequence(train, 3)
+x = pd.DataFrame(df_X)
+y = pd.DataFrame(df_Y)
+dataset_train = pd.concat([x, y], axis=1)
+dataset_train.columns = [f"X{i+1}" for i in range(df_X.shape[1])] + ["Y"]
+
+X_train = dataset_train.iloc[:, :2].values
+Y_train = dataset_train.iloc[:, -1].values
+test_x, test_y = split_sequence(test, 3)
+x = pd.DataFrame(test_x)
+y = pd.DataFrame(test_y)
+dataset_test = pd.concat([x, y], axis=1)
+dataset_test.columns = [f"X{i+1}" for i in range(test_x.shape[1])] + ["Y"]
+# dataset_test.to_csv('data-test.csv', index=False)
+X_test = dataset_test.iloc[:, :2].values
+Y_test = dataset_test.iloc[:, -1].values
+
+dataset_train
     """
     st.code(saveData, language="python")
 
-    prepro = """
-    from sklearn import preprocessing
-    le = preprocessing.LabelEncoder()
-    le.fit(y)
-    y = le.transform(y)
-    y
+    import numpy as np
+    from numpy import array
 
-    y_class = data['depressed']
-    y = y_class.values.tolist()
-    """
-    st.code(prepro, language="python")
+    def split_sequence(sequence, n_steps):
+        X, y = list(), list()
+        for i in range(len(sequence)):
+            # find the end of this pattern
+            end_ix = i + n_steps
+            # check if we are beyond the sequence
+            if end_ix > len(sequence) - 1:
+                break
+            # gather input and output parts of the pattern
+            seq_x, seq_y = sequence[i:end_ix], sequence[end_ix]
+            X.append(seq_x)
+            y.append(seq_y)
 
-    from sklearn import preprocessing
+        return array(X), array(y)
 
-    le = preprocessing.LabelEncoder()
-    le.fit(y)
-    y = le.transform(y)
-    y
-    y_class = data["depressed"]
-    y = y_class.values.tolist()
+    df_X, df_Y = split_sequence(train, 3)
+    x = pd.DataFrame(df_X)
+    y = pd.DataFrame(df_Y)
+    dataset_train = pd.concat([x, y], axis=1)
+    dataset_train.columns = [f"X{i+1}" for i in range(df_X.shape[1])] + ["Y"]
 
-    MinMax = """
-    from sklearn.preprocessing import MinMaxScaler
+    X_train = dataset_train.iloc[:, :2].values
+    Y_train = dataset_train.iloc[:, -1].values
+    test_x, test_y = split_sequence(test, 3)
+    x = pd.DataFrame(test_x)
+    y = pd.DataFrame(test_y)
+    dataset_test = pd.concat([x, y], axis=1)
+    dataset_test.columns = [f"X{i+1}" for i in range(test_x.shape[1])] + ["Y"]
+    # dataset_test.to_csv('data-test.csv', index=False)
+    X_test = dataset_test.iloc[:, :2].values
+    Y_test = dataset_test.iloc[:, -1].values
 
-    scaler = MinMaxScaler()
-    scaled = scaler.fit_transform(x)
-    nama_fitur = x.columns.copy()
-    scaled_fitur = pd.DataFrame(scaled,columns=nama_fitur)
-    scaled_fitur
-    """
-    st.code(MinMax, language="python")
-
-    from sklearn.preprocessing import MinMaxScaler
-
-    scaler = MinMaxScaler()
-    scaled = scaler.fit_transform(x)
-    nama_fitur = x.columns.copy()
-    scaled_fitur = pd.DataFrame(scaled, columns=nama_fitur)
-    scaled_fitur
-
-    dataSplit2 = """
-    from sklearn.model_selection import train_test_split
-    X_train, X_test, y_train, y_test=train_test_split(scaled_fitur, y, test_size=0.2, random_state=1)
-    X_train.shape + X_test.shape
-    """
-    st.code(dataSplit2, language="python")
-
-    from sklearn.model_selection import train_test_split
-
-    X_train, X_test, y_train, y_test = train_test_split(
-        scaled_fitur, y, test_size=0.2, random_state=1
-    )
-    X_train.shape + X_test.shape
-
-    savenormalisasi = """
-    import joblib
-    filename = '/content/drive/MyDrive/DATA MINING/TUGAS/model/norm.sav'
-    joblib.dump(scaler, filename) 
-    """
-    st.code(savenormalisasi, language="python")
+    dataset_test
 
 with tab3:
     pilihanModel = st.radio(
-        "Pilih model yang ingin ditampilkan :", ("K-NN (K-Nearest Neighbor)", "K-Means")
+        "Pilih model yang ingin ditampilkan :",
+        ("Decission Tree", "LinearRegression", "Multilayer perceptron"),
     )
 
-    if pilihanModel == "K-NN (K-Nearest Neighbor)":
+    if pilihanModel == "Decission Tree":
         model = """
-        from sklearn.neighbors import KNeighborsClassifier
-        from sklearn import metrics
-        #Try running from k=1 through 30 and record testing accuracy
-        k_range = range(1,31)
-        scores = {}
-        scores_list = []
-        for k in k_range:
-                # install model
-                knn = KNeighborsClassifier(n_neighbors=k)
-                knn.fit(X_train,y_train)
-                # save model
-                filenameKNN = '/content/drive/MyDrive/DATA MINING/TUGAS/model/modelKNN'+str(k)+'.pkl'
-                joblib.dump(knn,filenameKNN)
-                y_pred=knn.predict(X_test)
-                scores[k] = accuracy_score(y_test,y_pred)
-                scores_list.append(accuracy_score(y_test,y_pred))
-        scores
+        from sklearn.tree import DecisionTreeRegressor
+        from sklearn.metrics import mean_absolute_percentage_error
+        model = DecisionTreeRegressor()
+        model.fit(X_train, Y_train)
+
+        y_pred=model.predict(X_test)
+        error = mean_absolute_percentage_error(y_pred, Y_test)
         """
         st.code(model, language="python")
 
-        from sklearn.neighbors import KNeighborsClassifier
-        from sklearn import metrics
+        from sklearn.tree import DecisionTreeRegressor
+        from sklearn.metrics import mean_absolute_percentage_error
 
-        # Try running from k=1 through 30 and record testing accuracy
-        k_range = range(1, 31)
-        scores = {}
-        scores_list = []
-        for k in k_range:
-            # install model
-            knn = KNeighborsClassifier(n_neighbors=k)
-            knn.fit(X_train, y_train)
-            # save model
-            y_pred = knn.predict(X_test)
-            scores[k] = accuracy_score(y_test, y_pred)
-            scores_list.append(accuracy_score(y_test, y_pred))
-        scores
+        model = DecisionTreeRegressor()
+        model.fit(X_train, Y_train)
 
-        skor = """
-        scores_list.index(max(scores_list))+1 , max(scores_list)
-        """
-        st.code(skor, language="python")
+        y_pred = model.predict(X_test)
+        error = mean_absolute_percentage_error(y_pred, Y_test)
+        st.write("MAPE = ", error)
 
-        scores_list.index(max(scores_list)) + 1, max(scores_list)
-
-        akurasi = """
-        knn = KNeighborsClassifier(n_neighbors=scores_list.index(max(scores_list))+1)
-        knn.fit(X_train,y_train)
-        y_pred_knn =knn.predict(X_test)
-        # y_pred_knn
-        cm = confusion_matrix(y_test,y_pred_knn)
-        precision = round(precision_score(y_test,y_pred_knn, average="macro")*100,2)
-        acc = round(accuracy_score(y_test,y_pred_knn)*100,2)
-        recall = round(recall_score(y_test,y_pred_knn, average="macro")*100,2)
-        f1score = round(f1_score(y_test, y_pred_knn, average="macro")*100,2)
-        """
-        st.code(akurasi, language="python")
-
-        knn = KNeighborsClassifier(n_neighbors=scores_list.index(max(scores_list)) + 1)
-        knn.fit(X_train, y_train)
-        y_pred_knn = knn.predict(X_test)
-        # y_pred_knn
-        cm = confusion_matrix(y_test, y_pred_knn)
-        precision = round(precision_score(y_test, y_pred_knn, average="macro") * 100, 2)
-        acc = round(accuracy_score(y_test, y_pred_knn) * 100, 2)
-        recall = round(recall_score(y_test, y_pred_knn, average="macro") * 100, 2)
-        f1score = round(f1_score(y_test, y_pred_knn, average="macro") * 100, 2)
-
-        st.write("Konfusi Matrix")
-        cm
-        st.write("precision:")
-        precision
-        st.write("recall:")
-        recall
-        st.write("fscore:")
-        f1score
-        st.write("accuracy:")
-        acc
-    else:
+    elif pilihanModel == "LinearRegression":
         model1 = """
-        from sklearn.cluster import KMeans
+        from sklearn.linear_model import LinearRegression
+        from sklearn.metrics import mean_absolute_percentage_error
+        model = LinearRegression()
+        model.fit(X_train, Y_train)
 
-        # #Try running from n=1 through 30 and record testing accuracy
-        n_range = range(1,31)
-        akurasi = {}
-        akurasi_score = []
-        for k in n_range:
-                # install model
-                kmeans = KMeans(n_clusters=k,random_state=0)
-                kmeans.fit(X_train,y_train)
-                # save model
-                filenameKMeans = '/content/drive/MyDrive/DATA MINING/TUGAS/model/modelKmeans'+str(k)+'.pkl'
-                joblib.dump(kmeans,filenameKMeans)
-                y_pred=kmeans.predict(X_test)
-                akurasi[k] = accuracy_score(y_test,y_pred)
-                akurasi_score.append(accuracy_score(y_test,y_pred))
-        akurasi_score
+        y_pred=model.predict(X_test)
+        error = mean_absolute_percentage_error(y_pred, Y_test)
         """
         st.code(model1, language="python")
 
-        from sklearn.cluster import KMeans
+        from sklearn.linear_model import LinearRegression
+        from sklearn.metrics import mean_absolute_percentage_error
 
-        # #Try running from n=1 through 30 and record testing accuracy
-        n_range = range(1, 31)
-        akurasi = {}
-        akurasi_score = []
-        for k in n_range:
-            # install model
-            kmeans = KMeans(n_clusters=k, random_state=0)
-            kmeans.fit(X_train, y_train)
-            # save model
-            y_pred = kmeans.predict(X_test)
-            akurasi[k] = accuracy_score(y_test, y_pred)
-            akurasi_score.append(accuracy_score(y_test, y_pred))
-        akurasi_score
+        model = LinearRegression()
+        model.fit(X_train, Y_train)
 
-        skor1 = """
-        akurasi_score.index(max(akurasi_score))+1 , max(akurasi_score)
+        y_pred = model.predict(X_test)
+        error = mean_absolute_percentage_error(y_pred, Y_test)
+        st.write("MAPE = ", error)
+
+    else:
+        model1 = """
+        from sklearn.neural_network import MLPRegressor
+        from sklearn.metrics import mean_absolute_percentage_error
+        model = MLPRegressor(hidden_layer_sizes=(100, 50), activation='relu', solver='adam', random_state=42)
+        model.fit(X_train, Y_train)
+
+        y_pred=model.predict(X_test)
+        error = mean_absolute_percentage_error(y_pred, Y_test)
         """
-        st.code(skor1, language="python")
+        st.code(model1, language="python")
 
-        akurasi_score.index(max(akurasi_score)) + 1, max(akurasi_score)
+        from sklearn.neural_network import MLPRegressor
+        from sklearn.metrics import mean_absolute_percentage_error
 
-        akurasi1 = """
-        KMeans = KNeighborsClassifier(n_neighbors=akurasi_score.index(max(akurasi_score))+1)
-        KMeans.fit(X_train,y_train)
-        y_pred_KMeans =KMeans.predict(X_test)
-        # y_pred_KMeans
-        cm = confusion_matrix(y_test,y_pred_KMeans)
-        precision = round(precision_score(y_test,y_pred_KMeans, average="macro")*100,2)
-        acc = round(accuracy_score(y_test,y_pred_KMeans)*100,2)
-        recall = round(recall_score(y_test,y_pred_KMeans, average="macro")*100,2)
-        f1score = round(f1_score(y_test, y_pred_KMeans, average="macro")*100,2)
-        """
-        st.code(akurasi1, language="python")
-
-        KMeans = KNeighborsClassifier(
-            n_neighbors=akurasi_score.index(max(akurasi_score)) + 1
+        model = MLPRegressor(
+            hidden_layer_sizes=(100, 50),
+            activation="relu",
+            solver="adam",
+            random_state=42,
         )
-        KMeans.fit(X_train, y_train)
-        y_pred_KMeans = KMeans.predict(X_test)
-        # y_pred_KMeans
-        cm = confusion_matrix(y_test, y_pred_KMeans)
-        precision = round(
-            precision_score(y_test, y_pred_KMeans, average="macro") * 100, 2
-        )
-        acc = round(accuracy_score(y_test, y_pred_KMeans) * 100, 2)
-        recall = round(recall_score(y_test, y_pred_KMeans, average="macro") * 100, 2)
-        f1score = round(f1_score(y_test, y_pred_KMeans, average="macro") * 100, 2)
+        model.fit(X_train, Y_train)
 
-        st.write("Konfusi Matrix")
-        cm
-        st.write("precision:")
-        precision
-        st.write("recall:")
-        recall
-        st.write("fscore:")
-        f1score
-        st.write("accuracy:")
-        acc
+        y_pred = model.predict(X_test)
+        error = mean_absolute_percentage_error(y_pred, Y_test)
+        st.write("MAPE = ", error)
 with tab4:
     pilihModel = st.radio(
         "Pilih model yang ingin dipakai :",
