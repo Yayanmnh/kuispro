@@ -1,6 +1,14 @@
 import streamlit as st
 import pandas as pd
+from sklearn.preprocessing import MinMaxScaler
 import numpy as np
+from numpy import array
+from sklearn.tree import DecisionTreeRegressor
+from sklearn.neural_network import MLPRegressor
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_absolute_percentage_error
+from datetime import datetime
+import calendar
 from sklearn.metrics import (
     accuracy_score,
     f1_score,
@@ -108,8 +116,6 @@ with tab2:
     data_train = pd.DataFrame(data[:sizeTrain])
     data_test = pd.DataFrame(data[sizeTrain:])
 
-    from sklearn.preprocessing import MinMaxScaler
-
     scaler = MinMaxScaler()
     train_scaled = scaler.fit_transform(data_train)
 
@@ -164,8 +170,8 @@ dataset_train
     """
     st.code(saveData, language="python")
 
-    import numpy as np
-    from numpy import array
+    # import numpy as np
+    # from numpy import array
 
     def split_sequence(sequence, n_steps):
         X, y = list(), list()
@@ -218,8 +224,8 @@ with tab3:
         """
         st.code(model, language="python")
 
-        from sklearn.tree import DecisionTreeRegressor
-        from sklearn.metrics import mean_absolute_percentage_error
+        # from sklearn.tree import DecisionTreeRegressor
+        # from sklearn.metrics import mean_absolute_percentage_error
 
         model1 = DecisionTreeRegressor()
         model1.fit(X_train, Y_train)
@@ -239,8 +245,8 @@ with tab3:
         """
         st.code(model1, language="python")
 
-        from sklearn.linear_model import LinearRegression
-        from sklearn.metrics import mean_absolute_percentage_error
+        # from sklearn.linear_model import LinearRegression
+        # from sklearn.metrics import mean_absolute_percentage_error
 
         model2 = LinearRegression()
         model2.fit(X_train, Y_train)
@@ -260,9 +266,6 @@ with tab3:
         """
         st.code(model1, language="python")
 
-        from sklearn.neural_network import MLPRegressor
-        from sklearn.metrics import mean_absolute_percentage_error
-
         model3 = MLPRegressor(
             hidden_layer_sizes=(100, 50),
             activation="relu",
@@ -275,16 +278,14 @@ with tab3:
         error = mean_absolute_percentage_error(y_pred, Y_test)
         st.write("MAPE = ", error)
 with tab4:
-    from sklearn.linear_model import LinearRegression
-    from sklearn.metrics import mean_absolute_percentage_error
+    # from sklearn.linear_model import LinearRegression
+    # from sklearn.metrics import mean_absolute_percentage_error
 
     model2 = LinearRegression()
     model2.fit(X_train, Y_train)
 
     y_pred = model2.predict(X_test)
     if st.button("Process Code"):
-        from datetime import datetime
-        import calendar
 
         def ramal(dataset_test, tanggal):
             lr = model2
