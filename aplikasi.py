@@ -1,13 +1,6 @@
-# import libary
 import streamlit as st
-
-# import norm
-import time
-from pathlib import Path
 import pandas as pd
 import numpy as np
-from sklearn.neighbors import KNeighborsClassifier
-from sklearn import metrics
 from sklearn.metrics import (
     accuracy_score,
     f1_score,
@@ -16,64 +9,6 @@ from sklearn.metrics import (
     classification_report,
     confusion_matrix,
 )
-import streamlit.components.v1 as components
-import joblib
-
-
-def process_code():
-    from datetime import datetime
-    import calendar
-
-    def ramal(dataset_test, tanggal):
-        lr = joblib.load("modelLR.pkl")
-        tanggal = tanggal[0].split("-")
-        tahun = tanggal[0]
-        bulan = tanggal[1]
-        hari = tanggal[2]
-        tahun = int(tahun)
-        bulan = int(bulan)
-        hari = int(hari)
-        jumlah_hari = calendar.monthrange(tahun, bulan)[1]
-
-        last = dataset_test.tail(1)
-        fitur = last.values
-        n_fit = len(fitur[0])
-        fiturs = np.zeros((n_fit))
-        fitur = fitur[:, 1:n_fit]
-        y_pred = lr.predict(fitur)
-        new_fit = np.array(fitur[0])
-        new_fit = np.append(new_fit, y_pred)
-        fiturs[:] = new_fit
-        hari += 1
-        if hari > jumlah_hari:
-            bulan += 1
-            hari = 1
-        if bulan > 12:
-            tahun += 1
-            bulan = 1
-
-        tanggal = str(tahun) + "-" + f"{bulan:02d}" + "-" + f"{hari:02d}"
-
-        # Mengonversi string ke objek datetime
-        tanggal_cek = datetime.strptime(tanggal, "%Y-%m-%d")
-        nama_hari = tanggal_cek.strftime("%A")
-        # Mendapatkan nama hari dari objek datetime
-        if nama_hari == "Saturday":
-            hari += 2
-            tanggal = str(tahun) + "-" + f"{bulan:02d}" + "-" + f"{hari:02d}"
-        elif nama_hari == "Sunday":
-            hari += 1
-            tanggal = str(tahun) + "-" + f"{bulan:02d}" + "-" + f"{hari:02d}"
-        return y_pred, tanggal
-
-    tanggal_terakhir = df["Date"].tail(1).values
-    pred, tanggal = ramal(dataset_test, tanggal_terakhir)
-    reshaped_data = pred.reshape(-1, 1)
-    original_data = scaler.inverse_transform(reshaped_data)
-    pred = original_data.flatten()
-    df_pred = pd.DataFrame({"Date": tanggal, "Open": pred})
-
-    return df_pred
 
 
 # pige title
@@ -82,10 +17,7 @@ st.set_page_config(
     page_icon="https://abisgajian.id/images/thumbnail/ini-dia-daftar-saham-kategori-blue-chip-di-bursa-saham-indonesia.jpg",
 )
 
-# 0 = Anda Tidak Depresi
-# 1 = Anda Depresi
 
-# hide menu
 hide_streamlit_style = """
 
 <style>
