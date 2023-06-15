@@ -17,6 +17,7 @@ from sklearn.metrics import (
     confusion_matrix,
 )
 import streamlit.components.v1 as components
+import joblib
 
 
 def process_code():
@@ -24,7 +25,7 @@ def process_code():
     import calendar
 
     def ramal(dataset_test, tanggal):
-        lr = LinearRegression()
+        lr = joblib.load("modelLR.pkl")
         tanggal = tanggal[0].split("-")
         tahun = tanggal[0]
         bulan = tanggal[1]
@@ -98,7 +99,7 @@ st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 
 # insialisasi web
 st.markdown(
-    "<h1 style='text-align: center; color: black; margin:0 ; padding:0;'>Forecasting Data Saham PT INDOFOOD (Time Series Data)</h1>",
+    "<h1 style='text-align: center; color: black; margin:0 ; padding:0;'>Forecasting Data Saham PT Ultrajaya Milk Industry & Trading Company</h1>",
     unsafe_allow_html=True,
 )
 st.markdown(
@@ -249,24 +250,24 @@ dataset_train
 
         return array(X), array(y)
 
-    df_X, df_Y = split_sequence(train, 3)
+    df_X, df_Y = split_sequence(train, 2)
     x = pd.DataFrame(df_X)
     y = pd.DataFrame(df_Y)
     dataset_train = pd.concat([x, y], axis=1)
     dataset_train.columns = [f"X{i+1}" for i in range(df_X.shape[1])] + ["Y"]
-
     X_train = dataset_train.iloc[:, :2].values
     Y_train = dataset_train.iloc[:, -1].values
-    test_x, test_y = split_sequence(test, 3)
+    test_x, test_y = split_sequence(test, 2)
     x = pd.DataFrame(test_x)
     y = pd.DataFrame(test_y)
     dataset_test = pd.concat([x, y], axis=1)
     dataset_test.columns = [f"X{i+1}" for i in range(test_x.shape[1])] + ["Y"]
-    # dataset_test.to_csv('data-test.csv', index=False)
+    dataset_test.to_csv("data-test.csv", index=False)
     X_test = dataset_test.iloc[:, :2].values
     Y_test = dataset_test.iloc[:, -1].values
 
-    dataset_test
+    dataset_train
+
 
 with tab3:
     pilihanModel = st.radio(
@@ -275,8 +276,7 @@ with tab3:
     )
 
     if pilihanModel == "Decission Tree":
-        model = """
-        from sklearn.tree import DecisionTreeRegressor
+        model = """from sklearn.tree import DecisionTreeRegressor
         from sklearn.metrics import mean_absolute_percentage_error
         model = DecisionTreeRegressor()
         model.fit(X_train, Y_train)
@@ -289,16 +289,15 @@ with tab3:
         from sklearn.tree import DecisionTreeRegressor
         from sklearn.metrics import mean_absolute_percentage_error
 
-        model = DecisionTreeRegressor()
-        model.fit(X_train, Y_train)
+        model1 = DecisionTreeRegressor()
+        model1.fit(X_train, Y_train)
 
-        y_pred = model.predict(X_test)
+        y_pred = model1.predict(X_test)
         error = mean_absolute_percentage_error(y_pred, Y_test)
         st.write("MAPE = ", error)
 
     elif pilihanModel == "LinearRegression":
-        model1 = """
-        from sklearn.linear_model import LinearRegression
+        model1 = """from sklearn.linear_model import LinearRegression
         from sklearn.metrics import mean_absolute_percentage_error
         model = LinearRegression()
         model.fit(X_train, Y_train)
@@ -311,16 +310,15 @@ with tab3:
         from sklearn.linear_model import LinearRegression
         from sklearn.metrics import mean_absolute_percentage_error
 
-        model = LinearRegression()
-        model.fit(X_train, Y_train)
+        model2 = LinearRegression()
+        model2.fit(X_train, Y_train)
 
-        y_pred = model.predict(X_test)
+        y_pred = model2.predict(X_test)
         error = mean_absolute_percentage_error(y_pred, Y_test)
         st.write("MAPE = ", error)
 
     else:
-        model1 = """
-        from sklearn.neural_network import MLPRegressor
+        model1 = """from sklearn.neural_network import MLPRegressor
         from sklearn.metrics import mean_absolute_percentage_error
         model = MLPRegressor(hidden_layer_sizes=(100, 50), activation='relu', solver='adam', random_state=42)
         model.fit(X_train, Y_train)
@@ -333,20 +331,78 @@ with tab3:
         from sklearn.neural_network import MLPRegressor
         from sklearn.metrics import mean_absolute_percentage_error
 
-        model = MLPRegressor(
+        model3 = MLPRegressor(
             hidden_layer_sizes=(100, 50),
             activation="relu",
             solver="adam",
             random_state=42,
         )
-        model.fit(X_train, Y_train)
+        model3.fit(X_train, Y_train)
 
-        y_pred = model.predict(X_test)
+        y_pred = model3.predict(X_test)
         error = mean_absolute_percentage_error(y_pred, Y_test)
         st.write("MAPE = ", error)
 with tab4:
+    from sklearn.linear_model import LinearRegression
+    from sklearn.metrics import mean_absolute_percentage_error
+
+    model2 = LinearRegression()
+    model2.fit(X_train, Y_train)
+
+    y_pred = model2.predict(X_test)
     if st.button("Process Code"):
-        output = process_code()
-        st.write(output.tail(3))
-        st.write("Output:")
-        st.write(output)
+        from datetime import datetime
+        import calendar
+
+        def ramal(dataset_test, tanggal):
+            lr = model2
+            tanggal = tanggal[0].split("-")
+            tahun = tanggal[0]
+            bulan = tanggal[1]
+            hari = tanggal[2]
+            tahun = int(tahun)
+            bulan = int(bulan)
+            hari = int(hari)
+            jumlah_hari = calendar.monthrange(tahun, bulan)[1]
+
+            last = dataset_test.tail(1)
+            fitur = last.values
+            n_fit = len(fitur[0])
+            fiturs = np.zeros((n_fit))
+            fitur = fitur[:, 1:n_fit]
+            y_pred = lr.predict(fitur)
+            new_fit = np.array(fitur[0])
+            new_fit = np.append(new_fit, y_pred)
+            fiturs[:] = new_fit
+            hari += 1
+            if hari > jumlah_hari:
+                bulan += 1
+                hari = 1
+            if bulan > 12:
+                tahun += 1
+                bulan = 1
+
+            tanggal = str(tahun) + "-" + f"{bulan:02d}" + "-" + f"{hari:02d}"
+
+            # Mengonversi string ke objek datetime
+            tanggal_cek = datetime.strptime(tanggal, "%Y-%m-%d")
+            nama_hari = tanggal_cek.strftime("%A")
+            # Mendapatkan nama hari dari objek datetime
+            if nama_hari == "Saturday":
+                hari += 2
+                tanggal = str(tahun) + "-" + f"{bulan:02d}" + "-" + f"{hari:02d}"
+            elif nama_hari == "Sunday":
+                hari += 1
+                tanggal = str(tahun) + "-" + f"{bulan:02d}" + "-" + f"{hari:02d}"
+            return y_pred, tanggal
+
+        tanggal_terakhir = df["Date"].tail(1).values
+        pred, tanggal = ramal(dataset_test, tanggal_terakhir)
+        reshaped_data = pred.reshape(-1, 1)
+        original_data = scaler.inverse_transform(reshaped_data)
+        pred = original_data.flatten()
+        df_pred = pd.DataFrame({"Date": tanggal, "Open": pred})
+        lum = df.tail(2)
+        st.write(lum)
+        st.write("Hasil Prediksi:")
+        st.write(df_pred)
