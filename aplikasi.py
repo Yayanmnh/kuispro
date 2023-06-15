@@ -18,6 +18,63 @@ from sklearn.metrics import (
 )
 import streamlit.components.v1 as components
 
+
+def process_code():
+    from datetime import datetime
+    import calendar
+
+    def ramal(dataset_test, tanggal):
+        lr = LinearRegression()
+        tanggal = tanggal[0].split("-")
+        tahun = tanggal[0]
+        bulan = tanggal[1]
+        hari = tanggal[2]
+        tahun = int(tahun)
+        bulan = int(bulan)
+        hari = int(hari)
+        jumlah_hari = calendar.monthrange(tahun, bulan)[1]
+
+        last = dataset_test.tail(1)
+        fitur = last.values
+        n_fit = len(fitur[0])
+        fiturs = np.zeros((n_fit))
+        fitur = fitur[:, 1:n_fit]
+        y_pred = lr.predict(fitur)
+        new_fit = np.array(fitur[0])
+        new_fit = np.append(new_fit, y_pred)
+        fiturs[:] = new_fit
+        hari += 1
+        if hari > jumlah_hari:
+            bulan += 1
+            hari = 1
+        if bulan > 12:
+            tahun += 1
+            bulan = 1
+
+        tanggal = str(tahun) + "-" + f"{bulan:02d}" + "-" + f"{hari:02d}"
+
+        # Mengonversi string ke objek datetime
+        tanggal_cek = datetime.strptime(tanggal, "%Y-%m-%d")
+        nama_hari = tanggal_cek.strftime("%A")
+        # Mendapatkan nama hari dari objek datetime
+        if nama_hari == "Saturday":
+            hari += 2
+            tanggal = str(tahun) + "-" + f"{bulan:02d}" + "-" + f"{hari:02d}"
+        elif nama_hari == "Sunday":
+            hari += 1
+            tanggal = str(tahun) + "-" + f"{bulan:02d}" + "-" + f"{hari:02d}"
+        return y_pred, tanggal
+
+    tanggal_terakhir = df["Date"].tail(1).values
+    pred, tanggal = ramal(dataset_test, tanggal_terakhir)
+    reshaped_data = pred.reshape(-1, 1)
+    original_data = scaler.inverse_transform(reshaped_data)
+    pred = original_data.flatten()
+    df_pred = pd.DataFrame({"Date": tanggal, "Open": pred})
+
+    return df_pred
+
+
 # pige title
 st.set_page_config(
     page_title="Forecasting Data Saham PT Ultrajaya Milk Industry & Trading Company",
@@ -288,230 +345,8 @@ with tab3:
         error = mean_absolute_percentage_error(y_pred, Y_test)
         st.write("MAPE = ", error)
 with tab4:
-    pilihModel = st.radio(
-        "Pilih model yang ingin dipakai :",
-        ("1. K-NN (K-Nearest Neighbor)", "2. K-Means"),
-    )
-
-    if pilihModel == "1. K-NN (K-Nearest Neighbor)":
-        st.write("Anda memilih untuk memakai model K-NN (K-Nearest Neighbor)")
-        kolom = st.columns((2, 0.5, 2.7))
-
-        form = kolom[1].button("Form")
-        about = kolom[2].button("About")
-
-        # form page
-        if form == False and about == False or form == True and about == False:
-            st.markdown(
-                "<h1 style='text-align: center; color: white; margin:0 ; padding:0;'>Forecasting Data Saham PT INDOFOOD (Time Series Data)</h1>",
-                unsafe_allow_html=True,
-            )
-            st.markdown(
-                "<p style='text-align: center; color: white;'>Harap Diisi Semua Kolom</p>",
-                unsafe_allow_html=True,
-            )
-
-            col1, col2 = st.columns(2)
-            with col1:
-                nama = st.text_input("Masukkan Nama", placeholder="Nama")
-            with col2:
-                Age = st.number_input("Masukkan Umur", max_value=100)
-            sex = st.selectbox("Jenis Kelamin", ("Laki-laki", "Perempuan"))
-            col3, col4, col5 = st.columns(3)
-            with col3:
-                Number_children = st.number_input(
-                    "Jumlah anak yang dimiliki", min_value=0, max_value=999999999999
-                )
-            with col4:
-                education_level = st.number_input(
-                    "Level edukasi", min_value=0, max_value=999999999999
-                )
-            with col5:
-                total_members = st.number_input(
-                    "Jumlah anggota keluarga", min_value=0, max_value=999999999999
-                )
-            incoming_salary = st.selectbox(
-                "Apakah memiliki pendapatan?", ("Ya", "Tidak")
-            )
-            #    Centering Butoon
-            columns = st.columns((2, 0.6, 2))
-            sumbit = columns[1].button("Submit")
-            if (
-                sumbit
-                and nama != ""
-                and sex != ""
-                and Number_children != 0
-                and education_level != 0
-                and Age != 0
-                and total_members != 0
-                and incoming_salary != ""
-            ):
-                # cek jenis kelamin
-                # 0 = laki-laki
-                # 1 = perempuan
-                if sex == "Laki-laki":
-                    sex = 0
-                else:
-                    sex = 1
-
-                # cek memiliki pendapatan
-                # 0 = Ya
-                # 1 = Tidak
-                if incoming_salary == "Ya":
-                    incoming_salary = 0
-                else:
-                    incoming_salary = 1
-                # normalisasi data
-                data = norm.normalisasi(
-                    [
-                        sex,
-                        Age,
-                        Number_children,
-                        education_level,
-                        total_members,
-                        incoming_salary,
-                    ]
-                )
-                # prediksi data
-                prediksi = norm.knn(data)
-                # cek prediksi
-                with st.spinner("Tunggu Sebentar Masih Proses..."):
-                    if prediksi[-1] == 0:
-                        st.write(prediksi)
-                        time.sleep(1)
-                        st.success("Hasil Prediksi : " + nama + ", anda tidak depresi")
-                    else:
-                        st.write(prediksi)
-                        time.sleep(1)
-                        st.warning("Hasil Prediksi : " + nama + ", anda depresi")
-
-        # about page
-        if about == True and form == False:
-            st.markdown(
-                "<h1 style='text-align: center; color: white; margin:0 ; padding:0;'>Tentang Sistem ini</h1>",
-                unsafe_allow_html=True,
-            )
-            st.write(" ")
-            st.write(
-                "Sistem Predeksi Depresi adalah sebuah sistem yang bertujuan untuk memprediksi apakah seseorang dalam keadaan depresi atau tidak. Sistem ini dibuat menggunakan bahasa pemrograman python dan library streamlit."
-            )
-            st.markdown(
-                "<p  color: white;>Pada sistem ini menggunakan model KNN ( <i>K-nearest neighbors algorithm</i> ) dengan parameter <b>K = 6</b> . Dataset yang digunakan memiliki <b>8 fitur</b> termasuk kelas. Alasan menggunakan model KNN dengan parameter k = 6 adalah karena memiliki akurasi yang terbesar dari model lainnya pada dataset ini, sehingga diputuskan untuk menggunakan model tersebut.</p>",
-                unsafe_allow_html=True,
-            )
-            st.info(
-                "Pada data input level edukasi, Level 0 = tidak beredukasi||Level 1-6 = SD kelas 1-6||Level 7-9 = SMP kelas 7-9||Level 10-12 = SMA kelas 10-12||Level 13-14 = S1||Level 15-16 = S2||Level 17-19 = S3",
-                icon="ℹ️",
-            )
-            st.caption("Alifnur Fathurrahman Prasodjo - 200411100150")
-    else:
-        st.write("Anda memilih untuk memakai model K-Means")
-        kolom = st.columns((2, 0.5, 2.7))
-
-        form = kolom[1].button("Form")
-        about = kolom[2].button("About")
-
-        # form page
-        if form == False and about == False or form == True and about == False:
-            st.markdown(
-                "<h1 style='text-align: center; color: white; margin:0 ; padding:0;'>Prediksi Depresi</h1>",
-                unsafe_allow_html=True,
-            )
-            st.markdown(
-                "<p style='text-align: center; color: white;'>Harap Diisi Semua Kolom</p>",
-                unsafe_allow_html=True,
-            )
-
-            col1, col2 = st.columns(2)
-            with col1:
-                nama = st.text_input("Masukkan Nama", placeholder="Nama")
-            with col2:
-                Age = st.number_input("Masukkan Umur", max_value=100)
-            sex = st.selectbox("Jenis Kelamin", ("Laki-laki", "Perempuan"))
-            col3, col4, col5 = st.columns(3)
-            with col3:
-                Number_children = st.number_input(
-                    "Jumlah anak yang dimiliki", min_value=0, max_value=999999999999
-                )
-            with col4:
-                education_level = st.number_input(
-                    "Level edukasi", min_value=0, max_value=999999999999
-                )
-            with col5:
-                total_members = st.number_input(
-                    "Jumlah anggota keluarga", min_value=0, max_value=999999999999
-                )
-            incoming_salary = st.selectbox(
-                "Apakah memiliki pendapatan?", ("Ya", "Tidak")
-            )
-            #    Centering Butoon
-            columns = st.columns((2, 0.6, 2))
-            sumbit = columns[1].button("Submit")
-            if (
-                sumbit
-                and nama != ""
-                and sex != ""
-                and Number_children != 0
-                and education_level != 0
-                and Age != 0
-                and total_members != 0
-                and incoming_salary != ""
-            ):
-                # cek jenis kelamin
-                # 0 = laki-laki
-                # 1 = perempuan
-                if sex == "Laki-laki":
-                    sex = 0
-                else:
-                    sex = 1
-
-                # cek memiliki pendapatan
-                # 0 = Ya
-                # 1 = Tidak
-                if incoming_salary == "Ya":
-                    incoming_salary = 0
-                else:
-                    incoming_salary = 1
-                # normalisasi data
-                data = norm.normalisasi(
-                    [
-                        sex,
-                        Age,
-                        Number_children,
-                        education_level,
-                        total_members,
-                        incoming_salary,
-                    ]
-                )
-                # prediksi data
-                prediksi = norm.kmeans(data)
-                # cek prediksi
-                with st.spinner("Tunggu Sebentar Masih Proses..."):
-                    if prediksi[-1] == 0:
-                        st.write(prediksi)
-                        time.sleep(1)
-                        st.success("Hasil Prediksi : " + nama + ", anda tidak depresi")
-                    else:
-                        st.write(prediksi)
-                        time.sleep(1)
-                        st.warning("Hasil Prediksi : " + nama + ", anda depresi")
-
-        # about page
-        if about == True and form == False:
-            st.markdown(
-                "<h1 style='text-align: center; color: white; margin:0 ; padding:0;'>Tentang Sistem ini</h1>",
-                unsafe_allow_html=True,
-            )
-            st.write(" ")
-            st.write(
-                "Sistem Predeksi Depresi adalah sebuah sistem yang bertujuan untuk memprediksi apakah seseorang dalam keadaan depresi atau tidak. Sistem ini dibuat menggunakan bahasa pemrograman python dan library streamlit."
-            )
-            st.markdown(
-                "<p  color: white;>Pada sistem ini menggunakan model KNN ( <i>K-nearest neighbors algorithm</i> ) dengan parameter <b>K = 6</b> . Dataset yang digunakan memiliki <b>8 fitur</b> termasuk kelas. Alasan menggunakan model KNN dengan parameter k = 6 adalah karena memiliki akurasi yang terbesar dari model lainnya pada dataset ini, sehingga diputuskan untuk menggunakan model tersebut.</p>",
-                unsafe_allow_html=True,
-            )
-            st.info(
-                "Pada data input level edukasi, Level 0 = tidak beredukasi||Level 1-6 = SD kelas 1-6||Level 7-9 = SMP kelas 7-9||Level 10-12 = SMA kelas 10-12||Level 13-14 = S1||Level 15-16 = S2||Level 17-19 = S3",
-                icon="ℹ️",
-            )
-            st.caption("Alifnur Fathurrahman Prasodjo - 200411100150")
+    if st.button("Process Code"):
+        output = process_code()
+        st.write(output.tail(3))
+        st.write("Output:")
+        st.write(output)
